@@ -93,7 +93,7 @@ def atribui_tarefa(lista_de_ips):
 
 	#espera servidor iniciar
 	time.sleep(0.5)
-	go = input("Clique ENTER para iniciar a pesquisa: ")
+	go = input("Clique ENTER para iniciar a pesquisa: \n")
 	while True:
 		# Dicionario = {'ip':[sockobj,resposta]}
 		dicionario_ip_resposta = {}
@@ -102,14 +102,14 @@ def atribui_tarefa(lista_de_ips):
 		#palavra = input("Informe a string para pesquisa: ")
 
 		#Cria conexão com todos os servidores disponíveis
-		print("\nConectando com servidores...")
+		print("Conectando com servidores...\n")
 		for ip in lista_de_ips: # Pra cada ip tenta criar um cliente e preencher o dict de ip-objeto_socket
 			sockobj = cria_cliente(ip, porta)
 			if sockobj:
 				dicionario_ip_resposta[ip] = [sockobj, None]
-				#print("Socket criado em ", ip)
+				print(" - Conectado ao servidor!", ip)
 			else:
-				print("\n O IP: ",ip," não estádisponível no momento!\n")
+				print(" - O IP: ",ip," não estádisponível no momento!\n")
 
 		palavra = input("Informe a string para pesquisa: ")
 		#Manda cada um dos servidores fazerem a pesquisa e retorna o resultado
