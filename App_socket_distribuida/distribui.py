@@ -1,5 +1,5 @@
 from socket import *
-import os, time, threading
+import os, sys, time, threading
 from random import randint
 
 
@@ -76,9 +76,9 @@ def cria_cliente(ip, porta):
 	try:
 		ip = str(ip)
 		sockobj = socket(AF_INET, SOCK_STREAM)
-		#sockobj.settimeout(1.0)
+		sockobj.settimeout(1.0)
 		sockobj.connect((ip, porta))
-		#sockobj.settimeout(0)
+		sockobj.settimeout(None)
 
 	except:
 		sockobj = None
@@ -93,7 +93,7 @@ def atribui_tarefa(lista_de_ips):
 
 	#espera servidor iniciar
 	time.sleep(0.5)
-	go = input("Clique ENTER para iniciar a pesquisa: \n")
+	go = input("\nClique ENTER para iniciar a pesquisa: \n")
 	while True:
 		# Dicionario = {'ip':[sockobj,resposta]}
 		dicionario_ip_resposta = {}
@@ -112,6 +112,7 @@ def atribui_tarefa(lista_de_ips):
 				print(" - O IP: ",ip," não estádisponível no momento!\n")
 
 		palavra = input("Informe a string para pesquisa: ")
+
 		#Manda cada um dos servidores fazerem a pesquisa e retorna o resultado
 		print("\nRESULTADO DA PESQUISA")
 		for ip in dicionario_ip_resposta:
@@ -122,11 +123,21 @@ def atribui_tarefa(lista_de_ips):
 		#sockobj.close()
 ###########################Main_APP###########################
 
+
+#Construindo as threads
 Servidor = threading.Thread(target=recebe_tarefa)
 Cliente = threading.Thread(target=atribui_tarefa, args=(lista_de_ips,))
 
-Servidor.start()
-Cliente.start()
+#Configuração que faz threads pais matarem as threads filhas
+Servidor.daemon = True
+Cliente.daemon = True
 
-Servidor.join()
-Cliente.join()
+try:
+	Servidor.start()
+	Cliente.start()
+	Cliente.join()
+	Servidor.join()
+
+except KeyboardInterrupt:
+	print("\nCtrl-C/ Pesquisa cancelada!")
+	sys.exit()
